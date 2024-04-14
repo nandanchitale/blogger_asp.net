@@ -23,6 +23,13 @@
     </PackageReference>
     <PackageReference Include="Npgsql" Version="8.0.2" />
     <PackageReference Include="Npgsql.DependencyInjection" Version="8.0.2" />
+    <PackageReference Include="Npgsql.EntityFramework" Version="2.2.7" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Models\Models.csproj" />
+    <ProjectReference Include="..\EFCore\EFCore.csproj" />
   </ItemGroup>
 
 </Project>
