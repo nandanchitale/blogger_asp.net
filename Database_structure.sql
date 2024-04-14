@@ -25,13 +25,15 @@ CREATE TABLE blogger.posts (
 
 CREATE TABLE blogger.post_comments (
     id int8 not null default nextval('blogger.blogger_seq'),
+    post_id int8 not null,
     user_id int8 not null,
+    post_comment text not null,
 	status varchar(20) not null,
 	status_change_date timestamp not null,
+	
+	constraint post_comments_pk primary key (id),
+	constraint post_fk foreign key (post_id) references blogger.posts(id),
+	constraint comment_user_fk foreign key (user_id) references blogger.users(id)
 );
 
-CREATE TABLE post_comments (
-	
-    post_id int8
-    PRIMARY KEY (post_id, comment_id)
-);
+
