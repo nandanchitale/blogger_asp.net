@@ -1,7 +1,19 @@
+using Blogger.EFCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+// Will use this later
+// builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+//     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 var app = builder.Build();
 
@@ -18,6 +30,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// app.UseAuthentication(); // will use this later
 app.UseAuthorization();
 
 app.MapControllerRoute(

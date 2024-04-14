@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace Blogger.Models;
+namespace Blogger.EFCore;
 
-public partial class BloggerDbContext : DbContext
+public partial class ApplicationDbContext : DbContext
 {
-    public BloggerDbContext()
+    public ApplicationDbContext()
     {
     }
 
-    public BloggerDbContext(DbContextOptions<BloggerDbContext> options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }
