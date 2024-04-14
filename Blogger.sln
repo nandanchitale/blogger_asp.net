@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blogger", "Blogger\Blogger.csproj", "{1E5E2E30-1415-4429-B60B-02CCA8C42255}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{0F6731DF-C9DD-43E5-A1B5-2721D038A0A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore", "EFCore\EFCore.csproj", "{2D74040B-AD1D-456F-8DEC-9AB3033DCA64}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1E5E2E30-1415-4429-B60B-02CCA8C42255}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E5E2E30-1415-4429-B60B-02CCA8C42255}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E5E2E30-1415-4429-B60B-02CCA8C42255}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E5E2E30-1415-4429-B60B-02CCA8C42255}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F6731DF-C9DD-43E5-A1B5-2721D038A0A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F6731DF-C9DD-43E5-A1B5-2721D038A0A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F6731DF-C9DD-43E5-A1B5-2721D038A0A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F6731DF-C9DD-43E5-A1B5-2721D038A0A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D74040B-AD1D-456F-8DEC-9AB3033DCA64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D74040B-AD1D-456F-8DEC-9AB3033DCA64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D74040B-AD1D-456F-8DEC-9AB3033DCA64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D74040B-AD1D-456F-8DEC-9AB3033DCA64}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,17 @@
+services:
+  postgres_db:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: blogger_db_admin
+      POSTGRES_PASSWORD: blogger_db_admin
+      POSTGRES_DB: blogger_db
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    networks:
+      - demo-network
+
+networks:
+  demo-network:
+    driver: bridge
