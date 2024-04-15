@@ -7,70 +7,106 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Blogger.Models;
 using Blogger.EFCore;
+using Microsoft.AspNetCore.Authorization;
+using Helpers.ViewModels;
+using Helpers.Constants;
+using System.Security.Claims;
 
 namespace Blogger.Areas.Posts
 {
-    [Area("Home")]
+    [Authorize]
+    [Area("Posts")]
     public class PostsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<PostsController> _logger;
 
-        public PostsController(ApplicationDbContext context)
+        public PostsController(ApplicationDbContext context, ILogger<PostsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
-        // GET: Home/Posts
+        // GET: Posts/Posts
         public async Task<IActionResult> Index()
         {
-            var bloggerContext = _context.Posts.Include(p => p.Author);
-            return View(await bloggerContext.ToListAsync());
+            IActionResult returnValue = null;
+            try
+            {
+                long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+                IQueryable<Post> posts = _context.Posts.Where(rec => rec.AuthorId == session_user).AsQueryable();
+                returnValue = View(posts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Posts > Create : {ex.Message}");
+                returnValue = StatusCode(500, ex.Message);
+            }
+            return returnValue;
         }
 
-        // GET: Home/Posts/Details/5
+        // GET: Posts/Posts/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
+            IActionResult returnValue = NotFound();
+            try
             {
-                return NotFound();
+                if (id is not null)
+                {
+                    Post post = _context.Posts.Where(rec => rec.Id == id).FirstOrDefault();
+                    if (post != null) returnValue = View(post);
+                }
             }
-
-            var post = await _context.Posts
-                .Include(p => p.Author)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (post == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                _logger.LogError($"Posts > Create : {ex.Message}");
+                returnValue = StatusCode(500, ex.Message);
             }
-
-            return View(post);
+            return returnValue;
         }
 
-        // GET: Home/Posts/Create
+        // GET: Posts/Posts/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Set<User>(), "Id", "FirstName");
             return View();
         }
 
-        // POST: Home/Posts/Create
+        // POST: Posts/Posts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,AuthorId,PostContent,Status,StatusChangeDate")] Post post)
+        public async Task<IActionResult> Create(PostVM postVM)
         {
-            if (ModelState.IsValid)
+            IActionResult returnValue = View();
+            try
             {
-                _context.Add(post);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+                if (ModelState.IsValid)
+                {
+                    Post post = new Post()
+                    {
+                        Title = postVM.Title,
+                        PostContent = postVM.Content,
+                        AuthorId = session_user,
+                        Status = Status.Active,
+                        StatusChangeDate = DateTime.Now,
+                    };
+
+                    _context.Posts.Add(post);
+                    _context.SaveChanges();
+
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", post.AuthorId);
-            return View(post);
+            catch (Exception ex)
+            {
+                _logger.LogError($"Posts > Create : {ex.Message}");
+                returnValue = StatusCode(500, ex.Message);
+            }
+            return returnValue;
         }
 
-        // GET: Home/Posts/Edit/5
+        // GET: Posts/Posts/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -87,79 +123,82 @@ namespace Blogger.Areas.Posts
             return View(post);
         }
 
-        // POST: Home/Posts/Edit/5
+        // POST: Posts/Posts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Title,AuthorId,PostContent,Status,StatusChangeDate")] Post post)
+        public async Task<IActionResult> Edit(PostVM PostVM)
         {
-            if (id != post.Id)
+            IActionResult returnValue = NotFound();
+            try
             {
-                return NotFound();
-            }
+                long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+                if (ModelState.IsValid)
+                {
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(post);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PostExists(post.Id))
+                    Post post = _context.Posts.Where(rec => rec.Id == PostVM.PostId && rec.AuthorId == session_user).FirstOrDefault();
+                    if (post is not null)
                     {
-                        return NotFound();
+                        post.Title = PostVM.Title;
+                        post.PostContent = PostVM.Content;
+                        post.StatusChangeDate = DateTime.Now;
                     }
-                    else
-                    {
-                        throw;
-                    }
+                    _context.SaveChanges();
+
+                    returnValue = RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", post.AuthorId);
-            return View(post);
+            catch (Exception ex)
+            {
+                _logger.LogError($"Posts > Create : {ex.Message}");
+                returnValue = StatusCode(500, ex.Message);
+            }
+            return returnValue;
         }
 
-        // GET: Home/Posts/Delete/5
+        // GET: Posts/Posts/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
+            IActionResult returnValue = NotFound();
+            try
             {
-                return NotFound();
+                long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+                if (id is not null)
+                {
+                    Post post = _context.Posts.Where(rec => rec.Id == id && rec.AuthorId == session_user).FirstOrDefault();
+                    returnValue = View(post);
+                }
             }
-
-            var post = await _context.Posts
-                .Include(p => p.Author)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (post == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                _logger.LogError($"Posts > Create : {ex.Message}");
+                returnValue = StatusCode(500, ex.Message);
             }
-
-            return View(post);
+            return returnValue;
         }
 
-        // POST: Home/Posts/Delete/5
+        // POST: Posts/Posts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var post = await _context.Posts.FindAsync(id);
-            if (post != null)
+            IActionResult returnValue = NotFound();
+            try
             {
-                _context.Posts.Remove(post);
+                long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+                Post post = _context.Posts.Where(rec => rec.Id == id && rec.AuthorId == session_user).FirstOrDefault();
+                post.Status = Status.Inactive;
+                post.StatusChangeDate = DateTime.Now;
+                _context.SaveChanges();
+                returnValue = RedirectToAction(nameof(Index));
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool PostExists(long id)
-        {
-            return _context.Posts.Any(e => e.Id == id);
+            catch (Exception ex)
+            {
+                _logger.LogError($"Posts > Create : {ex.Message}");
+                returnValue = StatusCode(500, ex.Message);
+            }
+            return returnValue;
         }
     }
 }

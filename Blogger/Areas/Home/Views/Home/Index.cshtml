@@ -1,5 +1,5 @@
-﻿@using Blogger.Models;
-@model IEnumerable<Post>; // Assuming BlogPost is your model for blog posts
+﻿@using Helpers.ViewModels;
+@model IEnumerable<PostVM>; // Assuming BlogPost is your model for blog posts
 @{
     Layout = "/Views/Shared/_Layout.cshtml";
 }
@@ -12,13 +12,13 @@
     <div class="row">
         <div class="col">
             <ul class="list-group">
-                @foreach (Post post in Model)
+                @foreach (PostVM post in Model)
                 {
-                    <li>
+                    <li >
                         <h2>@post.Title</h2>
-                        <p>@post.PostContent</p>
+                        <p>@post.Content</p>
                         <p>Author: @post.Author</p>
-                        <a href="@Url.Action("Details", "Blog", new { id = post.Id })">Read More</a>
+                        <a href="@Url.Action("Details", "Blog", new { id = post.PostId })">Read More</a>
                     </li>
                 }
             </ul>
@@ -32,7 +32,7 @@
             }
             else
             {
-                <a href="@Url.Action("Create", "Blog")" class="btn btn-success">Create New Blog Post</a>
+                <a href="/Posts/Posts/Create" class="btn btn-success">Create New Blog Post</a>
             }
         </div>
     </div>

@@ -1,9 +1,11 @@
-using Blogger.EFCore;
+﻿using Blogger.EFCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Helpers.Logging;
 using Microsoft.AspNetCore.Identity;
 using Helpers.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Blogger.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddRazorPages();
+builder.Services.AddDbContext<BloggerContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("BloggerContext") ?? throw new InvalidOperationException("Connection string 'BloggerContext' not found.")));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -60,7 +64,7 @@ app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{area=Auth}/{controller=Home}/{action=Index}/{id?}"
+    pattern: "{area=Home}/{controller=Home}/{action=Index}/{id?}"
 // pattern: "{area=Auth}/{controller=Auth}/{action=Index}/{id?}"
 );
 
