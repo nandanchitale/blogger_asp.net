@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Blogger.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blogger.EFCore;

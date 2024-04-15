@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore", "EFCore\EFCore.csproj", "{2D74040B-AD1D-456F-8DEC-9AB3033DCA64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{589E70B8-8174-478D-B72D-501656FA3A52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{2D74040B-AD1D-456F-8DEC-9AB3033DCA64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D74040B-AD1D-456F-8DEC-9AB3033DCA64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D74040B-AD1D-456F-8DEC-9AB3033DCA64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{589E70B8-8174-478D-B72D-501656FA3A52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{589E70B8-8174-478D-B72D-501656FA3A52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{589E70B8-8174-478D-B72D-501656FA3A52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{589E70B8-8174-478D-B72D-501656FA3A52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
