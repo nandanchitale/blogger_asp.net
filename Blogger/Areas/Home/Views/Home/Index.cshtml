@@ -4,36 +4,39 @@
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 <div class="container mt-5">
-    <div class="row">
-        <div class="col">
-            <h1>Welcome to Our Blog!</h1>
+    <!-- Page Header-->
+    <header class="masthead" style="background-image: url('~/images/home-bg.jpg')">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="site-heading">
+                        <h1>Welcome To BlogPosts</h1>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <ul class="list-group">
+    </header>
+    <!-- Main Content-->
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
                 @foreach (PostVM post in Model)
                 {
-                    <li >
-                        <h2>@post.Title</h2>
-                        <p>@post.Content</p>
-                        <p>Author: @post.Author</p>
-                        <a href="@Url.Action("Details", "Blog", new { id = post.PostId })">Read More</a>
-                    </li>
+                    <!-- Post preview-->
+                    <div class="post-preview">
+                        <h2 class="post-title">@post.Title</h2>
+                        <p>@Html.Raw(Helpers.Helper.StringHelper.Truncate(post.Content, 200))</p> <!-- Truncate content to 200 characters -->
+                        <p class="post-meta">
+                            Posted by
+                            <a href="#!">@post.Author</a>
+                            on @post.PostTimeStamp
+                        </p>
+                        <a href="Posts/Posts/Details/@post.PostId">Read More</a>
+                    </div>
+                    <!-- Divider-->
+                    <hr class="my-4" />
                 }
-            </ul>
-        </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col">
-            @if (!User.Identity.IsAuthenticated)
-            {
-                <p>You need to <a href="/Auth/Account/SignIn">sign in</a> to create a new blog post.</p>
-            }
-            else
-            {
-                <a href="/Posts/Posts/Create" class="btn btn-success">Create New Blog Post</a>
-            }
+            </div>
         </div>
     </div>
 </div>

@@ -42,7 +42,7 @@ public class HomeController : Controller
                                       Title = post.Title,
                                       Content = post.PostContent,
                                       Author = $"{postAuthor.FirstName} {postAuthor.LastName}",
-                                      PostTimeStamp = post.StatusChangeDate.ToString("dd-MMM-yyyy HH:mm"),
+                                      PostTimeStamp = post.StatusChangeDate.ToString("MMMM dd, yyyy"),
                                   }).ToList();
             returnValue = View(posts);
         }

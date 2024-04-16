@@ -14,7 +14,6 @@ using System.Security.Claims;
 
 namespace Blogger.Areas.Posts
 {
-    [Authorize]
     [Area("Posts")]
     public class PostsController : Controller
     {
@@ -28,7 +27,9 @@ namespace Blogger.Areas.Posts
         }
 
         // GET: Posts/Posts
-        public async Task<IActionResult> Index()
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public IActionResult Index()
         {
             IActionResult returnValue = null;
             try
@@ -46,15 +47,34 @@ namespace Blogger.Areas.Posts
         }
 
         // GET: Posts/Posts/Details/5
-        public async Task<IActionResult> Details(long? id)
+        /// <summary>
+        /// Method to Get the Post Data from ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult Details(long? id)
         {
             IActionResult returnValue = NotFound();
             try
             {
                 if (id is not null)
                 {
-                    Post post = _context.Posts.Where(rec => rec.Id == id).FirstOrDefault();
-                    if (post != null) returnValue = View(post);
+                    Post db_post = _context.Posts.Where(rec => rec.Id == id).FirstOrDefault();
+                    User postAuthor = _context.Users.Where(rec => rec.Id == db_post.AuthorId).FirstOrDefault();
+
+                    if (db_post is not null && postAuthor is not null)
+                    {
+                        PostVM post = new PostVM
+                        {
+                            PostId = db_post.Id,
+                            Title = db_post.Title,
+                            Content = db_post.PostContent,
+                            Author = $"{postAuthor.FirstName} {postAuthor.LastName}",
+                            PostTimeStamp = db_post.StatusChangeDate.ToString("MMMM dd, yyyy"),
+                        };
+                        returnValue = View(post);
+                    }
                 }
             }
             catch (Exception ex)
@@ -66,6 +86,8 @@ namespace Blogger.Areas.Posts
         }
 
         // GET: Posts/Posts/Create
+        [Authorize]
+        [ValidateAntiForgeryToken]
         public IActionResult Create()
         {
             return View();
@@ -75,7 +97,9 @@ namespace Blogger.Areas.Posts
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Create(PostVM postVM)
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(PostVM postVM)
         {
             IActionResult returnValue = View();
             try
@@ -107,6 +131,8 @@ namespace Blogger.Areas.Posts
         }
 
         // GET: Posts/Posts/Edit/5
+        [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -127,8 +153,9 @@ namespace Blogger.Areas.Posts
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(PostVM PostVM)
+        public IActionResult Edit(PostVM PostVM)
         {
             IActionResult returnValue = NotFound();
             try
@@ -158,7 +185,14 @@ namespace Blogger.Areas.Posts
         }
 
         // GET: Posts/Posts/Delete/5
-        public async Task<IActionResult> Delete(long? id)
+        /// <summary>
+        /// Method to Show post before deletion
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(long? id)
         {
             IActionResult returnValue = NotFound();
             try
@@ -166,8 +200,21 @@ namespace Blogger.Areas.Posts
                 long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
                 if (id is not null)
                 {
-                    Post post = _context.Posts.Where(rec => rec.Id == id && rec.AuthorId == session_user).FirstOrDefault();
-                    returnValue = View(post);
+                    Post db_post = _context.Posts.Where(rec => rec.Id == id && rec.AuthorId == session_user).FirstOrDefault();
+                    User postAuthor = _context.Users.Where(rec => rec.Id == db_post.Id).FirstOrDefault();
+
+                    if (db_post is not null && postAuthor is not null)
+                    {
+                        PostVM post = new PostVM
+                        {
+                            PostId = db_post.Id,
+                            Title = db_post.Title,
+                            Content = db_post.PostContent,
+                            Author = $"{postAuthor.FirstName} {postAuthor.LastName}",
+                            PostTimeStamp = db_post.StatusChangeDate.ToString("MMMM dd, yyyy"),
+                        };
+                        returnValue = View(post);
+                    }
                 }
             }
             catch (Exception ex)
@@ -181,7 +228,8 @@ namespace Blogger.Areas.Posts
         // POST: Posts/Posts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(long id)
+        [Authorize]
+        public IActionResult DeleteConfirmed(long id)
         {
             IActionResult returnValue = NotFound();
             try

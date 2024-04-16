@@ -5,7 +5,6 @@ using Helpers.Logging;
 using Microsoft.AspNetCore.Identity;
 using Helpers.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Blogger.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +21,6 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<BloggerContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("BloggerContext") ?? throw new InvalidOperationException("Connection string 'BloggerContext' not found.")));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
