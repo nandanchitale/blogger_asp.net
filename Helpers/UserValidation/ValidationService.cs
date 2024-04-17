@@ -8,10 +8,12 @@ namespace Helpers.Services
     public class ValidationService
     {
         private readonly ILogger<ValidationService> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public ValidationService(ILogger<ValidationService> logger)
+        public ValidationService(ILogger<ValidationService> logger, ApplicationDbContext dbContext)
         {
             _logger = logger;
+            _context = dbContext;
         }
 
         /// <summary>
@@ -36,7 +38,7 @@ namespace Helpers.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Validation Service > {ex.Message}");
+                _logger.LogError($"Validation Service > ValidatePassword > {ex.Message}");
             }
             return returnValue;
         }
@@ -48,7 +50,7 @@ namespace Helpers.Services
         /// <param name="salt"></param>
         /// <param name="hasher"></param>
         /// <returns></returns>
-        private string ConvertToHashCode(string password)
+        public string ConvertToHashCode(string password)
         {
             string returnValue = string.Empty;
             try
@@ -67,7 +69,21 @@ namespace Helpers.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Validation Service > {ex.Message}");
+                _logger.LogError($"Validation Service > ConvertToHashCode > {ex.Message}");
+            }
+            return returnValue;
+        }
+
+        public bool isEmailExists(string email)
+        {
+            bool returnValue = false;
+            try
+            {
+                returnValue = _context.Users.Where(rec => rec.Email.Trim().ToLower().Equals(email.Trim().ToLower())).Any();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Validation Service > isEmailExists > {ex.Message}");
             }
             return returnValue;
         }

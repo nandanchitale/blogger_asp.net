@@ -21,13 +21,13 @@
                 height="57">
             <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
-            <div class="form-floating">
+            <div class="form-floating my-2">
                 <input type="text" class="form-control" id="floatingInput" placeholder="Username"
-                    asp-for="@Model.LoginName">
-                <span asp-validation-for="@Model.LoginName" class="text-danger"></span>
-                <label for="floatingInput">Username</label>
+                    asp-for="@Model.Email">
+                <span asp-validation-for="@Model.Email" class="text-danger"></span>
+                <label for="floatingInput">Email</label>
             </div>
-            <div class="form-floating">
+            <div class="form-floating my-2">
                 <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
                     onselectstart="return false" onpaste="return false;" onCopy="return false" onCut="return false"
                     onDrag="return false" onDrop="return false" autocomplete=off type="password" class="form-control"
@@ -41,10 +41,12 @@
             Remember me
             </label>
             </div> *@
-            <button class="btn btn-primary w-100 py-2 my-3" type="submit" asp-area="Auth" asp-controller="Account"
+            <button class="btn btn-primary w-100 py-2 my-2" type="submit" asp-area="Auth" asp-controller="Account"
                     asp-action="SignIn">
                 Sign In
             </button>
         </form>
+        <p>New here? <a href="/Auth/Account/SignUp">Sign Up</a></p>
+        <p><a href="/">Back to Homepage</a></p>
     </main>
 </div>

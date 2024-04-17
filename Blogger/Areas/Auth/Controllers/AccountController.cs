@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Helpers.Services;
 using Microsoft.AspNetCore.Authorization;
+using Helpers.Helper;
 
 namespace Blogger.Controllers;
 
@@ -20,18 +21,21 @@ public class AccountController : Controller
     private readonly IConfiguration? _configuration;
     private readonly ApplicationDbContext _dbContext;
     private readonly ValidationService _validationService;
+    private readonly CommonOperations _commonOperations;
 
     public AccountController(
         ApplicationDbContext dbContext,
         ILogger<AccountController> logger,
         IConfiguration configuration,
-        ValidationService validationService
+        ValidationService validationService,
+        CommonOperations commonOperations
     )
     {
         _dbContext = dbContext;
         _logger = logger;
         _configuration = configuration;
         _validationService = validationService;
+        _commonOperations = commonOperations;
     }
 
     [HttpGet]
@@ -63,7 +67,7 @@ public class AccountController : Controller
         {
             if (ModelState.IsValid)
             {
-                var userFromDb = _dbContext.Users.Where(rec => rec.Username.Equals(model.LoginName)).FirstOrDefault();
+                var userFromDb = _dbContext.Users.Where(rec => rec.Email.Equals(model.Email)).FirstOrDefault();
                 //if the user does not exist in database
                 if (userFromDb == null)
                 {
@@ -75,23 +79,7 @@ public class AccountController : Controller
                     isPasswordCorrect = _validationService.ValidatePassword(model.Password, userFromDb.Password);
                     if (isPasswordCorrect)
                     {
-                        #region [SIGN IN, COOKIE BASED AUTHENTICATION]
-                        var claims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.NameIdentifier, userFromDb.Id.ToString()),
-                            new Claim(ClaimTypes.Name, userFromDb.FirstName + " " + userFromDb.LastName),
-                            new Claim("login_name", userFromDb.Username),
-                            new Claim("status",userFromDb.Status),
-                            new Claim("status_change_date",userFromDb.StatusChangeDate.ToString()),
-                        };
-
-                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties
-                        {
-                            IsPersistent = false,
-                        });
-                        #endregion
+                        await startUserSessionAsync(userFromDb);
 
                         returnValue = Redirect("/Home/Home/Index");
                     }
@@ -127,4 +115,108 @@ public class AccountController : Controller
         }
     }
 
+    [HttpGet]
+    public IActionResult SignUp()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SignUpAsync(SignUpVM model)
+    {
+        IActionResult returnValue = View();
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                User user = new User
+                {
+                    Id = _commonOperations.GetNextSeqNumber(),
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    Username = $"{model.FirstName}.{model.LastName}",
+                    Password = _validationService.ConvertToHashCode(model.Password),
+                    Status = Status.Active,
+                    StatusChangeDate = DateTime.Now,
+                };
+
+                _dbContext.Add(user);
+                _dbContext.SaveChanges();
+                await startUserSessionAsync(user);
+
+                returnValue = Redirect("/Home/Home/Index");
+            }
+        }
+        catch (Exception e)
+        {
+            string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+            string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+            _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+            TempData["loginPage_error"] = "There is a problem. Please Contact Administrator";
+        }
+        return returnValue;
+    }
+
+    [HttpPost]
+    [Route("/Account/CheckEmail")]
+    public IActionResult CheckEmailExists(string email)
+    {
+        IActionResult returnValue = StatusCode(500);
+        try
+        {
+            // Check if the request is an AJAX request
+            if (Request.Headers["X-Requested-With"].Equals("XMLHttpRequest"))
+            {
+                // Check if the email exists
+                bool emailExists = _validationService.isEmailExists(email);
+
+                // Return response based on email existence
+                returnValue = Json(new { exists = emailExists });
+            }
+        }
+        catch (Exception e)
+        {
+            string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+            string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+            _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+            TempData["signuppage_error"] = "There is a problem. Please Contact Administrator";
+        }
+        return returnValue;
+    }
+
+    /// <summary>
+    /// This method is used to setup claims of user and start user session
+    /// Either from sign in or from sign up
+    /// </summary>
+    private async Task startUserSessionAsync(User userFromDb)
+    {
+        try
+        {
+            #region [SIGN IN, COOKIE BASED AUTHENTICATION]
+            var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.NameIdentifier, userFromDb.Id.ToString()),
+                            new Claim(ClaimTypes.Name, userFromDb.FirstName + " " + userFromDb.LastName),
+                            new Claim("login_name", userFromDb.Username),
+                            new Claim("status",userFromDb.Status),
+                            new Claim("status_change_date",userFromDb.StatusChangeDate.ToString()),
+                        };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties
+            {
+                IsPersistent = false,
+            });
+            #endregion
+        }
+        catch(Exception e)
+        {
+            string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+            string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+            _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+            TempData["signuppage_error"] = "There is a problem. Please Contact Administrator";
+        }
+    }
 }

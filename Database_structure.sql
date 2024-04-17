@@ -1,3 +1,11 @@
+CREATE SEQUENCE blogger.blogger_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 9223372036854775807
+	START 1
+	CACHE 1
+	NO CYCLE;
+
 create table blogger.users(
 	id int8 not null default nextval('blogger.blogger_seq'),
 	first_name varchar(150) not null,
@@ -36,4 +44,12 @@ CREATE TABLE blogger.post_comments (
 	constraint comment_user_fk foreign key (user_id) references blogger.users(id)
 );
 
-
+CREATE OR REPLACE FUNCTION blogger.getseq()
+ RETURNS bigint
+ LANGUAGE plpgsql
+AS $function$
+	BEGIN
+		return nextval('blogger.blogger_seq');
+	END;
+$function$
+;

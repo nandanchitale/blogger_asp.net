@@ -3,21 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blogger", "Blogger\Blogger.csproj", "{1E5E2E30-1415-4429-B60B-02CCA8C42255}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blogger", "Blogger\Blogger.csproj", "{1E5E2E30-1415-4429-B60B-02CCA8C42255}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{0F6731DF-C9DD-43E5-A1B5-2721D038A0A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{0F6731DF-C9DD-43E5-A1B5-2721D038A0A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore", "EFCore\EFCore.csproj", "{2D74040B-AD1D-456F-8DEC-9AB3033DCA64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore", "EFCore\EFCore.csproj", "{2D74040B-AD1D-456F-8DEC-9AB3033DCA64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{589E70B8-8174-478D-B72D-501656FA3A52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helpers", "Helpers\Helpers.csproj", "{589E70B8-8174-478D-B72D-501656FA3A52}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DFD7578E-3EE4-40C6-B323-962DCBCF3836}"
+	ProjectSection(SolutionItems) = preProject
+		Database_structure.sql = Database_structure.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1E5E2E30-1415-4429-B60B-02CCA8C42255}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -36,5 +38,11 @@ Global
 		{589E70B8-8174-478D-B72D-501656FA3A52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{589E70B8-8174-478D-B72D-501656FA3A52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{589E70B8-8174-478D-B72D-501656FA3A52}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {10844F42-9249-43C2-A3C6-569CC31528A4}
 	EndGlobalSection
 EndGlobal

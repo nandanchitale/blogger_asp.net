@@ -5,6 +5,7 @@ using Helpers.Logging;
 using Microsoft.AspNetCore.Identity;
 using Helpers.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Helpers.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<ValidationService>();
+builder.Services.AddScoped<CommonOperations>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
