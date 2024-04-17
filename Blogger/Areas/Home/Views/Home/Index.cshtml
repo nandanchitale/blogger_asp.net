@@ -1,44 +1,73 @@
 ﻿@using Helpers.ViewModels;
-@model IEnumerable<PostVM>; // Assuming BlogPost is your model for blog posts
+@model PaginationVM<PostVM>; // Assuming PaginationViewModel<PostVM> contains the paginated list of blog posts
 @{
     Layout = "../Shared/_Layout.cshtml";
     // Layout = "~/Views/Shared/_Layout.cshtml";
-    <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
 }
-<div class="container">
-    <!-- Page Header-->
-    <header class="masthead" style="background-image: url('/images/home-bg.jpg')">
-        <div class="container position-relative px-4 px-lg-5">
-            <div class="row gx-4 gx-lg-5 justify-content-center">
-                <div class="col-md-10 col-lg-8 col-xl-7">
-                    <div class="site-heading">
-                        <h1>Welcome To BlogPosts</h1>
+
+    <div class="container">
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('/images/home-bg.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="site-heading">
+                            <h1>Welcome To BlogPosts</h1>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </header>
-    <!-- Main Content-->
-    <div class="container px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5 justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-7">
-                @foreach (PostVM post in Model)
+        </header>
+        <!-- Main Content-->
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                @foreach (var post in Model.Items)
                 {
-                    <!-- Post preview-->
-                    <div class="post-preview">
-                        <h2 class="post-title">@post.Title</h2>
-                        <p>@Html.Raw(Helpers.Helper.StringHelper.Truncate(post.Content, 200))</p> <!-- Truncate content to 200 characters -->
-                        <p class="post-meta">
-                            Posted by
-                            <a href="#!">@post.Author</a>
-                            on @post.PostTimeStamp
-                        </p>
-                        <a href="Posts/Posts/Details/@post.PostId">Read More</a>
-                    </div>
-                    <!-- Divider-->
-                    <hr class="my-4" />
+                        <!-- Post preview-->
+                        <div class="post-preview">
+                            <h2 class="post-title">@post.Title</h2>
+                            <p>@Html.Raw(Helpers.Helper.StringHelper.Truncate(post.Content, 200))</p> <!-- Truncate content to 200 characters -->
+                            <p class="post-meta">
+                                Posted by
+                                <a href="#!">@post.Author</a>
+                                on @post.PostTimeStamp
+                            </p>
+                            <a href="Posts/Posts/Details/@post.PostId">Read More</a>
+                        </div>
+                        <!-- Divider-->
+                        <hr class="my-4" />
                 }
+
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                        @if (Model.HasPreviousPage)
+                        {
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=@(Model.PageIndex - 1)" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                        }
+                        @for (var i = 1; i <= Model.TotalPages; i++)
+                        {
+                                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                                    <a class="page-link" href="?page=@i">@i</a>
+                                </li>
+                        }
+                        @if (Model.HasNextPage)
+                        {
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=@(Model.PageIndex + 1)" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                        }
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
-</div>
