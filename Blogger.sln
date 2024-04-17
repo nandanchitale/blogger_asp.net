@@ -13,7 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helpers", "Helpers\Helpers.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DFD7578E-3EE4-40C6-B323-962DCBCF3836}"
 	ProjectSection(SolutionItems) = preProject
-		Database_structure.sql = Database_structure.sql
+		blogger_db.sql = blogger_db.sql
+		Take Home Assignmen_v2.pdf = Take Home Assignmen_v2.pdf
 	EndProjectSection
 EndProject
 Global
