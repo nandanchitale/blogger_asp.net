@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Security.Claims;
 using Blogger.EFCore;
 using Blogger.Models;
+using Dapper;
 using Helpers.Constants;
 using Helpers.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ public class HomeController : Controller
         IActionResult returnValue = View();
         try
         {
-            List<Post> db_posts = _dbContext.Posts.Where(rec=>rec.Status.Equals(Status.Active)).ToList();
+            List<Post> db_posts = _dbContext.Posts.Where(rec=>rec.Status.Equals(Status.Active)).OrderByDescending(rec=>rec.StatusChangeDate).ToList();
             List<User> postAuthors = _dbContext.Users.Where(rec => rec.Status.Equals(Status.Active)).ToList();
             List<PostVM> posts = (from post in db_posts
                                   join postAuthor in postAuthors on post.AuthorId equals postAuthor.Id
@@ -44,12 +45,16 @@ public class HomeController : Controller
                                       Author = $"{postAuthor.FirstName} {postAuthor.LastName}",
                                       PostTimeStamp = post.StatusChangeDate.ToString("MMMM dd, yyyy"),
                                   }).ToList();
+
             returnValue = View(posts);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            _logger.LogError($"Exception at Home > Index : {ex.Message}");
-            returnValue = StatusCode(500, ex);
+            string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+            string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+            _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+            
+            returnValue = StatusCode(500, e);
         }
         return returnValue;
     }

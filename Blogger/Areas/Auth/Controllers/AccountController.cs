@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Helpers.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blogger.Controllers;
 
@@ -103,6 +104,27 @@ public class AccountController : Controller
             returnValue = StatusCode(500, ex);
         }
         return returnValue;
+    }
+
+    [Authorize] //only logged in user can execute this method
+    public async Task<IActionResult> SignOut()
+    {
+        try
+        {
+            long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return Redirect("/");
+        }
+        catch (Exception e)
+        {
+            string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+            string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+            _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+            TempData["loginPage_error"] = "There is a problem. Please Contact Administrator";
+            //MenuList.Clear(); // clears the MenuList which contains all the menu items that user could have access to
+            return Redirect("/");
+        }
     }
 
 }

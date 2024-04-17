@@ -1,6 +1,6 @@
 ﻿@{
     string userId = "";
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Blogger | Post";
     @if (User.Identity.IsAuthenticated)
     {
         var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
@@ -35,20 +35,34 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a asp-area="Posts" asp-controller="Posts" asp-action="Index" class="nav-link text-dark">View My Posts</a>
+                            </li>
+
+                            <li class="nav-item ms-auto">
+                                <a data-session-user-id="@userId" class="nav-link text-dark sessionUser">Hello @User.Identity.Name</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-action="SignOut" asp-area="Auth" asp-controller="Account" asp-action="SignOut"><i class="bi bi-box-arrow-right"></i></a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item ms-auto">
+                                <a href="/Auth/Account/SignIn" class="nav-link text-dark">Sign In</a>
+                            </li>
+                            <li class="nav-item ms-auto">
+                                <a href="/Auth/Account/SignUp" class="nav-link text-dark">Sign Up</a>
+                            </li>
+                        }
                     </ul>
-                </div>
-                <div class="d-sm-inline-flex justify-content-between">
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <div class="mr-3">
-                            <p data-session-user-id="@userId" class="sessionUser">Hello @User.Identity.Name</p><br />
-                        </div>
-                    }
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container-fluid">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

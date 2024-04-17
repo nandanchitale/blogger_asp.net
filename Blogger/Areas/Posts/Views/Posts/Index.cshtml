@@ -2,49 +2,55 @@
 
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "../Shared/_Layout.cshtml";
 }
+<div class="container">
+    <div class="d-flex flex-row-reverse">
+        <div class="p-2 bd-highlight">
+            <a href="/Posts/Posts/Create" class="btn btn-primary bd-highlight">
+                <i class="bi bi-plus-circle-fill"></i>
+            </a>
+        </div>
+    </div>
 
-<h1>Index</h1>
+    <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Last Modified Date</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StatusChangeDate)
-                </td>
-                <td>
-                    <!-- Edit Icon -->
-                    <a asp-action="Edit" asp-area="Posts" asp-controller="Posts" asp-route-id="@item.Id" class="btn btn-primary" href="/Posts/Posts/Edit/@item.Id">
-                        <i class="bi bi-pencil-fill"></i>
-                    </a>
-
-                    <!-- Details Icon -->
-                    <a asp-action="Details" asp-area="Posts" asp-controller="Posts" asp-route-id="@item.Id" class="btn btn-info" href="/Posts/Posts/Details/@item.Id">
-                        <i class="bi bi-info-circle-fill"></i>
-                    </a>
-
-                    <!-- Delete Icon -->
-                    <a asp-action="Delete" asp-area="Posts" asp-controller="Posts" asp-route-id="@item.Id" class="btn btn-danger" href="/Posts/Posts/Delete/@item.Id">
-                        <i class="bi bi-trash-fill"></i>
-                    </a>
-                </td>
+                <th>Title</th>
+                <th>Last Modified Date</th>
+                <th>Action</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StatusChangeDate)
+                    </td>
+                    <td>
+                        <!-- Edit Icon -->
+                        <a href="/Posts/Posts/Edit/@item.Id" class="btn btn-primary">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+
+                        <!-- Details Icon -->
+                        <a href="/Posts/Posts/Details/@item.Id" class="btn btn-info">
+                            <i class="bi bi-info-circle-fill"></i>
+                        </a>
+
+                        <!-- Delete Icon -->
+                        <a href="/Posts/Posts/Delete/@item.Id" class="btn btn-danger">
+                            <i class="bi bi-trash-fill"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,11 +1,13 @@
 ﻿@using Helpers.ViewModels;
 @model IEnumerable<PostVM>; // Assuming BlogPost is your model for blog posts
 @{
-    Layout = "/Views/Shared/_Layout.cshtml";
+    Layout = "../Shared/_Layout.cshtml";
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+    <link rel="stylesheet" href="~/css/site.css" />
 }
-<div class="container mt-5">
+<div class="container">
     <!-- Page Header-->
-    <header class="masthead" style="background-image: url('~/images/home-bg.jpg')">
+    <header class="masthead" style="background-image: url('/images/home-bg.jpg')">
         <div class="container position-relative px-4 px-lg-5">
             <div class="row gx-4 gx-lg-5 justify-content-center">
                 <div class="col-md-10 col-lg-8 col-xl-7">

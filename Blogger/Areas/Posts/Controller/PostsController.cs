@@ -28,14 +28,13 @@ namespace Blogger.Areas.Posts
 
         // GET: Posts/Posts
         [Authorize]
-        [ValidateAntiForgeryToken]
         public IActionResult Index()
         {
-            IActionResult returnValue = null;
+            IActionResult returnValue = View();
             try
             {
                 long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
-                IQueryable<Post> posts = _context.Posts.Where(rec => rec.AuthorId == session_user).AsQueryable();
+                IQueryable<Post> posts = _context.Posts.Where(rec => rec.AuthorId == session_user && rec.Status.Equals(Status.Active)).OrderByDescending(rec=>rec.StatusChangeDate).AsQueryable();
                 returnValue = View(posts);
             }
             catch (Exception ex)
@@ -77,17 +76,19 @@ namespace Blogger.Areas.Posts
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError($"Posts > Create : {ex.Message}");
-                returnValue = StatusCode(500, ex.Message);
+                string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+                string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+                _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+
+                returnValue = StatusCode(500, e);
             }
             return returnValue;
         }
 
         // GET: Posts/Posts/Create
         [Authorize]
-        [ValidateAntiForgeryToken]
         public IActionResult Create()
         {
             return View();
@@ -98,7 +99,6 @@ namespace Blogger.Areas.Posts
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize]
-        [ValidateAntiForgeryToken]
         public IActionResult Create(PostVM postVM)
         {
             IActionResult returnValue = View();
@@ -119,34 +119,56 @@ namespace Blogger.Areas.Posts
                     _context.Posts.Add(post);
                     _context.SaveChanges();
 
-                    return RedirectToAction(nameof(Index));
+                    returnValue = Redirect("/home");
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError($"Posts > Create : {ex.Message}");
-                returnValue = StatusCode(500, ex.Message);
+                string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+                string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+                _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+
+                returnValue = StatusCode(500, e);
             }
             return returnValue;
         }
 
         // GET: Posts/Posts/Edit/5
         [Authorize]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long? id)
+        public IActionResult Edit(long? id)
         {
-            if (id == null)
+            IActionResult returnValue = NotFound();
+            try
             {
-                return NotFound();
-            }
+                long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+                if (id is not null)
+                {
+                    var db_post = _context.Posts.Where(rec => rec.Id == id && rec.AuthorId == session_user).FirstOrDefault();
+                    User postAuthor = _context.Users.Where(rec => rec.Id == db_post.AuthorId).FirstOrDefault();
 
-            var post = await _context.Posts.FindAsync(id);
-            if (post == null)
-            {
-                return NotFound();
+                    if (db_post is not null && postAuthor is not null)
+                    {
+                        PostVM post = new PostVM
+                        {
+                            PostId = db_post.Id,
+                            Title = db_post.Title,
+                            Content = db_post.PostContent,
+                            Author = $"{postAuthor.FirstName} {postAuthor.LastName}",
+                            PostTimeStamp = db_post.StatusChangeDate.ToString("MMMM dd, yyyy"),
+                        };
+                        returnValue = View(post);
+                    }
+                }
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", post.AuthorId);
-            return View(post);
+            catch (Exception e)
+            {
+                string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+                string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+                _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+
+                returnValue = StatusCode(500, e);
+            }
+            return returnValue;
         }
 
         // POST: Posts/Posts/Edit/5
@@ -154,7 +176,6 @@ namespace Blogger.Areas.Posts
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize]
-        [ValidateAntiForgeryToken]
         public IActionResult Edit(PostVM PostVM)
         {
             IActionResult returnValue = NotFound();
@@ -191,7 +212,6 @@ namespace Blogger.Areas.Posts
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize]
-        [ValidateAntiForgeryToken]
         public IActionResult Delete(long? id)
         {
             IActionResult returnValue = NotFound();
@@ -201,7 +221,7 @@ namespace Blogger.Areas.Posts
                 if (id is not null)
                 {
                     Post db_post = _context.Posts.Where(rec => rec.Id == id && rec.AuthorId == session_user).FirstOrDefault();
-                    User postAuthor = _context.Users.Where(rec => rec.Id == db_post.Id).FirstOrDefault();
+                    User postAuthor = _context.Users.Where(rec => rec.Id == db_post.AuthorId).FirstOrDefault();
 
                     if (db_post is not null && postAuthor is not null)
                     {
@@ -215,6 +235,7 @@ namespace Blogger.Areas.Posts
                         };
                         returnValue = View(post);
                     }
+
                 }
             }
             catch (Exception ex)
@@ -236,10 +257,13 @@ namespace Blogger.Areas.Posts
             {
                 long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
                 Post post = _context.Posts.Where(rec => rec.Id == id && rec.AuthorId == session_user).FirstOrDefault();
-                post.Status = Status.Inactive;
-                post.StatusChangeDate = DateTime.Now;
-                _context.SaveChanges();
-                returnValue = RedirectToAction(nameof(Index));
+                if(post is not null)
+                {
+                    post.Status = Status.Inactive;
+                    post.StatusChangeDate = DateTime.Now;
+                    _context.SaveChanges();
+                    returnValue = RedirectToAction(nameof(Index));
+                }
             }
             catch (Exception ex)
             {
