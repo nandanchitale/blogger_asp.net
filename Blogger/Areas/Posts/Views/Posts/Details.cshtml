@@ -29,58 +29,69 @@
     <article class="mb-4">
         <div class="container px-4 px-lg-5">
             <div class="row gx-4 gx-lg-5 justify-content-center">
-                <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="col-md-10 col-lg-8 col-xl-7 border-bottom">
                     @Html.Raw(Model.Content)
                 </div>
             </div>
         </div>
     </article>
 
+
     <!-- Comment Form -->
     <div class="container px-4 px-lg-5 mt-2">
         <div class="row gx-4 gx-lg-5 justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-7">
-                <h3>Add a Comment</h3>
-                <form action="@Url.Action("AddComment", "Posts", new { area = "Posts" })" method="post" class="form p-2">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" id="PostId" name="PostId" value="@Model.PostId" />
-                    <textarea id="CommentText" name="CommentText" maxlength="2000" rows="5" cols="50" asp-for="@comment.CommentText"></textarea>
-                    <div>
-                        <p id="charCount"></p>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Post Comments -->
-    <div class="container px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5 justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-7">
-                <h3>Comments</h3>
-                @foreach (PostCommentsVM postComment in Model.PostComments)
+            <div class="col-md-10 col-lg-8 col-xl-7 border-bottom">
+                @if (User.Identity.IsAuthenticated)
                 {
-                    <div class="mt-1 card shadow-0 border">
-                        <div class="card">
-                            <div class="card-body">
-                                <p>@postComment.CommentText</p>
-
-                                <div class="d-flex justify-content-between">
-                                    <div class="d-flex flex-row align-items-center">
-                                        <p class="small mb-0 ms-2">@postComment.Commenter</p>
-                                    </div>
-                                    <div class="d-flex flex-row align-items-center">
-                                        <p class="small text-muted mb-0">@postComment.PostCommentTimeStamp</p>
-                                    </div>
-                                </div>
-                            </div>
+                    <h3>Add a Comment</h3>
+                    <form action="@Url.Action("AddComment", "Posts", new { area = "Posts" })" method="post" class="form p-2">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" id="PostId" name="PostId" value="@Model.PostId" />
+                        <textarea id="CommentText" name="CommentText" maxlength="2000" rows="5" cols="50" asp-for="@comment.CommentText"></textarea>
+                        <div>
+                            <p id="charCount"></p>
                         </div>
-                    </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                }
+                else
+                {
+                    <p><a href="/Auth/Account/SignIn">Sign In</a> to Comment on this post</p>
                 }
             </div>
         </div>
     </div>
+
+    @if (Model.PostComments is not null && Model.PostComments.Count() > 0)
+    {
+        <!-- Post Comments -->
+        <div class="container px-4 px-lg-5 mt-3">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <h3>Comments</h3>
+                    @foreach (PostCommentsVM postComment in Model.PostComments)
+                    {
+                        <div class="mt-1 card shadow-0 border">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p>@postComment.CommentText</p>
+
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex flex-row align-items-center">
+                                            <p class="small mb-0 ms-2">@postComment.Commenter</p>
+                                        </div>
+                                        <div class="d-flex flex-row align-items-center">
+                                            <p class="small text-muted mb-0">@postComment.PostCommentTimeStamp</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
 
     <div>
         <a href="/home">Back to List</a>

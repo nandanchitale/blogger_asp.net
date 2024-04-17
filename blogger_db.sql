@@ -5,7 +5,7 @@
 -- Dumped from database version 12.18 (Debian 12.18-1.pgdg120+2)
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-04-17 18:38:32
+-- Started on 2024-04-17 23:18:36
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -131,9 +131,9 @@ CREATE TABLE blogger.users (
 -- Data for Name: post_comments; Type: TABLE DATA; Schema: blogger; Owner: -
 --
 
-INSERT INTO blogger.post_comments VALUES (22, 19, 1, 'Amazing', 'ACTV', '2024-04-17 15:59:25.205437');
-INSERT INTO blogger.post_comments VALUES (24, 19, 23, 'Nice post', 'ACTV', '2024-04-17 16:04:50.723529');
-INSERT INTO blogger.post_comments VALUES (26, 19, 25, 'Nice Blog', 'ACTV', '2024-04-17 16:15:14.98513');
+INSERT INTO blogger.post_comments VALUES (22, 13, 1, 'Amazing', 'ACTV', '2024-04-17 15:59:25.205437');
+INSERT INTO blogger.post_comments VALUES (24, 13, 23, 'Nice post', 'ACTV', '2024-04-17 16:04:50.723529');
+INSERT INTO blogger.post_comments VALUES (26, 13, 25, 'Nice Blog', 'ACTV', '2024-04-17 16:15:14.98513');
 
 
 --
@@ -150,6 +150,7 @@ INSERT INTO blogger.posts VALUES (15, 'Reaching for the Stars', 1, '<p>As we got
 INSERT INTO blogger.posts VALUES (16, 'Test', 1, '<p>1234</p>', 'INAC', '2024-04-16 16:19:12.197548');
 INSERT INTO blogger.posts VALUES (17, 'It is a long established fact a reader be distracted', 1, '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis, eius mollitia suscipit, quisquam doloremque distinctio perferendis et doloribus unde architecto optio laboriosam porro adipisci sapiente officiis nemo accusamus ad praesentium? Esse minima nisi et. Dolore perferendis, enim praesentium omnis, iste doloremque quia officia optio deserunt molestiae voluptates soluta architecto tempora.''</p><p><br></p><p>Molestiae cupiditate inventore animi, maxime sapiente optio, illo est nemo veritatis repellat sunt doloribus nesciunt! Minima laborum magni reiciendis qui voluptate quisquam voluptatem soluta illo eum ullam incidunt rem assumenda eveniet eaque sequi deleniti tenetur dolore amet fugit perspiciatis ipsa, odit. Nesciunt dolor minima esse vero ut ea, repudiandae suscipit!</p>', 'INAC', '2024-04-16 16:52:54.866946');
 INSERT INTO blogger.posts VALUES (19, 'It is a long established fact a reader be distracted', 1, '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis, eius mollitia suscipit, quisquam doloremque distinctio perferendis et doloribus unde architecto optio laboriosam porro adipisci sapiente officiis nemo accusamus ad praesentium? Esse minima nisi et. Dolore perferendis, enim praesentium omnis, iste doloremque quia officia optio deserunt molestiae voluptates soluta architecto tempora.</p><p>Molestiae cupiditate inventore animi, maxime sapiente optio, illo est nemo veritatis repellat sunt doloribus nesciunt! Minima laborum magni reiciendis qui voluptate quisquam voluptatem soluta illo eum ullam incidunt rem assumenda eveniet eaque sequi deleniti tenetur dolore amet fugit perspiciatis ipsa, odit. Nesciunt dolor minima esse vero ut ea, repudiandae suscipit!</p>', 'INAC', '2024-04-17 16:16:12.944281');
+INSERT INTO blogger.posts VALUES (27, 'Test', 1, '<p><strong>Test blog post</strong></p><h1>Hello Theredfgsdfg</h1>', 'INAC', '2024-04-17 23:16:21.860537');
 
 
 --
@@ -159,6 +160,7 @@ INSERT INTO blogger.posts VALUES (19, 'It is a long established fact a reader be
 --
 
 INSERT INTO blogger.users VALUES (1, 'nandan', 'chitale', 'nandanchitale', 'nandanchitale@gmail.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'ACTV', '2024-04-15 17:08:18.482292');
+INSERT INTO blogger.users VALUES (20, 'Nandan', 'Chitale', 'Nandan.Chitale', 'nandanchitale@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 'ACTV', '2024-04-17 12:54:09.081767');
 INSERT INTO blogger.users VALUES (21, 'Nandan', 'Chitale', 'Nandan.Chitale', 'nandanchitale99@gmail.com', 'c92e8ac33e6dc1c9810fa79f383635b065e64cddaafc10a8e180c6e7be6debf4', 'ACTV', '2024-04-17 12:54:33.197463');
 INSERT INTO blogger.users VALUES (23, 'Atharva', 'Chitnavis', 'Atharva.Chitnavis', 'atharvachitnavis@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 'ACTV', '2024-04-17 16:04:13.182197');
 INSERT INTO blogger.users VALUES (25, 'John', 'Matten', 'John.Matten', 'john.doe@domain.com', '8bb0cf6eb9b17d0f7d22b456f121257dc1254e1f01665370476383ea776df414', 'ACTV', '2024-04-17 16:14:54.771095');
@@ -170,7 +172,7 @@ INSERT INTO blogger.users VALUES (25, 'John', 'Matten', 'John.Matten', 'john.doe
 -- Name: blogger_seq; Type: SEQUENCE SET; Schema: blogger; Owner: -
 --
 
-SELECT pg_catalog.setval('blogger.blogger_seq', 26, true);
+SELECT pg_catalog.setval('blogger.blogger_seq', 27, true);
 
 
 --
@@ -227,7 +229,7 @@ ALTER TABLE ONLY blogger.post_comments
     ADD CONSTRAINT post_fk FOREIGN KEY (post_id) REFERENCES blogger.posts(id);
 
 
--- Completed on 2024-04-17 18:38:33
+-- Completed on 2024-04-17 23:18:37
 
 --
 -- PostgreSQL database dump complete

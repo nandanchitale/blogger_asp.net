@@ -61,12 +61,12 @@ namespace Blogger.Areas.Posts
                 if (id is not null)
                 {
                     Post db_post = _context.Posts.Where(rec => rec.Id == id && rec.Status.Equals(Status.Active)).FirstOrDefault();
-                    List<User> users = _context.Users.Where(rec => rec.Status.Equals(Status.Active)).ToList();
-                    User postAuthor = users.Where(rec => rec.Id == db_post.AuthorId).FirstOrDefault();
-                    List<PostComment> postComments = _context.PostComments.Where(rec => rec.PostId == id).OrderByDescending(rec => rec.StatusChangeDate).ToList();
-
                     if (db_post is not null)
                     {
+                        List<User> users = _context.Users.Where(rec => rec.Status.Equals(Status.Active)).ToList();
+                        User postAuthor = users.Where(rec => rec.Id == db_post.AuthorId).FirstOrDefault();
+                        List<PostComment> postComments = _context.PostComments.Where(rec => rec.PostId == id).OrderByDescending(rec => rec.StatusChangeDate).ToList();
+
                         PostVM post = new PostVM
                         {
                             PostId = db_post.Id,
@@ -251,7 +251,7 @@ namespace Blogger.Areas.Posts
                             Title = db_post.Title,
                             Content = db_post.PostContent,
                             Author = $"{postAuthor.FirstName} {postAuthor.LastName}",
-                            PostTimeStamp = db_post.StatusChangeDate.ToString("MMMM dd, yyyy"),
+                            PostTimeStamp = db_post.StatusChangeDate.ToString("MMMM dd, yyyy, HH:mm"),
                         };
                         returnValue = View(post);
                     }
