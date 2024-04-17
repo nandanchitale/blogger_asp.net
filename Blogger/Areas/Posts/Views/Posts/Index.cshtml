@@ -15,42 +15,49 @@
 
     <h1>Index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Last Modified Date</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    @if (Model.Count() > 0)
+    {
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.StatusChangeDate)
-                    </td>
-                    <td>
-                        <!-- Edit Icon -->
-                        <a href="/Posts/Posts/Edit/@item.Id" class="btn btn-primary">
-                            <i class="bi bi-pencil-fill"></i>
-                        </a>
-
-                        <!-- Details Icon -->
-                        <a href="/Posts/Posts/Details/@item.Id" class="btn btn-info">
-                            <i class="bi bi-info-circle-fill"></i>
-                        </a>
-
-                        <!-- Delete Icon -->
-                        <a href="/Posts/Posts/Delete/@item.Id" class="btn btn-danger">
-                            <i class="bi bi-trash-fill"></i>
-                        </a>
-                    </td>
+                    <th>Title</th>
+                    <th>Last Modified Date</th>
+                    <th>Action</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StatusChangeDate)
+                        </td>
+                        <td>
+                            <!-- Edit Icon -->
+                            <a href="/Posts/Posts/Edit/@item.Id" class="btn btn-primary">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+
+                            <!-- Details Icon -->
+                            <a href="/Posts/Posts/Details/@item.Id" class="btn btn-info">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+
+                            <!-- Delete Icon -->
+                            <a href="/Posts/Posts/Delete/@item.Id" class="btn btn-danger">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No Posts created yet. <a href="/Posts/Posts/Create">Create new</a> </p>
+    }
 </div>
