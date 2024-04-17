@@ -60,7 +60,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("nextval('blogger_seq'::regclass)")
                 .HasColumnName("id");
-            entity.Property(e => e.PostComment1).HasColumnName("post_comment");
+            entity.Property(e => e.CommentText).HasColumnName("comment_text");
             entity.Property(e => e.PostId).HasColumnName("post_id");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)

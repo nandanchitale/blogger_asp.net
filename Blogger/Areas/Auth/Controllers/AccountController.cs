@@ -81,7 +81,7 @@ public class AccountController : Controller
                     {
                         await startUserSessionAsync(userFromDb);
 
-                        returnValue = Redirect("/Home/Home/Index");
+                        returnValue = Redirect("/");
                     }
                 }
             }
@@ -145,7 +145,7 @@ public class AccountController : Controller
                 _dbContext.SaveChanges();
                 await startUserSessionAsync(user);
 
-                returnValue = Redirect("/Home/Home/Index");
+                returnValue = Redirect("/");
             }
         }
         catch (Exception e)

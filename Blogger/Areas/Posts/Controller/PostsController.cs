@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Helpers.ViewModels;
 using Helpers.Constants;
 using System.Security.Claims;
+using Microsoft.Extensions.Hosting;
 
 namespace Blogger.Areas.Posts
 {
@@ -34,7 +35,7 @@ namespace Blogger.Areas.Posts
             try
             {
                 long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
-                IQueryable<Post> posts = _context.Posts.Where(rec => rec.AuthorId == session_user && rec.Status.Equals(Status.Active)).OrderByDescending(rec=>rec.StatusChangeDate).AsQueryable();
+                IQueryable<Post> posts = _context.Posts.Where(rec => rec.AuthorId == session_user && rec.Status.Equals(Status.Active)).OrderByDescending(rec => rec.StatusChangeDate).AsQueryable();
                 returnValue = View(posts);
             }
             catch (Exception ex)
@@ -59,10 +60,12 @@ namespace Blogger.Areas.Posts
             {
                 if (id is not null)
                 {
-                    Post db_post = _context.Posts.Where(rec => rec.Id == id).FirstOrDefault();
-                    User postAuthor = _context.Users.Where(rec => rec.Id == db_post.AuthorId).FirstOrDefault();
+                    Post db_post = _context.Posts.Where(rec => rec.Id == id && rec.Status.Equals(Status.Active)).FirstOrDefault();
+                    List<User> users = _context.Users.Where(rec => rec.Status.Equals(Status.Active)).ToList();
+                    User postAuthor = users.Where(rec => rec.Id == db_post.AuthorId).FirstOrDefault();
+                    List<PostComment> postComments = _context.PostComments.Where(rec => rec.PostId == id).OrderByDescending(rec => rec.StatusChangeDate).ToList();
 
-                    if (db_post is not null && postAuthor is not null)
+                    if (db_post is not null)
                     {
                         PostVM post = new PostVM
                         {
@@ -71,7 +74,21 @@ namespace Blogger.Areas.Posts
                             Content = db_post.PostContent,
                             Author = $"{postAuthor.FirstName} {postAuthor.LastName}",
                             PostTimeStamp = db_post.StatusChangeDate.ToString("MMMM dd, yyyy"),
+
+                            PostComments = (
+                                from postComment in postComments
+                                join user in users on postComment.UserId equals user.Id
+                                select new PostCommentsVM
+                                {
+                                    PostCommentId = postComment.Id,
+                                    PostID = db_post.Id,
+                                    Commenter = $"{user.FirstName} {user.LastName}",
+                                    CommentText = postComment.CommentText,
+                                    PostCommentTimeStamp = postComment.StatusChangeDate.ToString("MMMM dd, yyyy"),
+                                }
+                            ).ToList()
                         };
+
                         returnValue = View(post);
                     }
                 }
@@ -197,10 +214,13 @@ namespace Blogger.Areas.Posts
                     returnValue = RedirectToAction(nameof(Index));
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError($"Posts > Create : {ex.Message}");
-                returnValue = StatusCode(500, ex.Message);
+                string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+                string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+                _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+
+                returnValue = StatusCode(500, e);
             }
             return returnValue;
         }
@@ -238,10 +258,13 @@ namespace Blogger.Areas.Posts
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError($"Posts > Create : {ex.Message}");
-                returnValue = StatusCode(500, ex.Message);
+                string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+                string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+                _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+
+                returnValue = StatusCode(500, e);
             }
             return returnValue;
         }
@@ -257,7 +280,7 @@ namespace Blogger.Areas.Posts
             {
                 long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
                 Post post = _context.Posts.Where(rec => rec.Id == id && rec.AuthorId == session_user).FirstOrDefault();
-                if(post is not null)
+                if (post is not null)
                 {
                     post.Status = Status.Inactive;
                     post.StatusChangeDate = DateTime.Now;
@@ -265,10 +288,51 @@ namespace Blogger.Areas.Posts
                     returnValue = RedirectToAction(nameof(Index));
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError($"Posts > Create : {ex.Message}");
-                returnValue = StatusCode(500, ex.Message);
+                string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+                string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+                _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+
+                returnValue = StatusCode(500, e);
+            }
+            return returnValue;
+        }
+
+        // POST: Posts/Posts/Delete/5
+        [HttpPost, ActionName("AddComment")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public IActionResult AddComment(PostCommentsVM postCommentsVM)
+        {
+            IActionResult returnValue = NotFound();
+            try
+            {
+                long session_user = long.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+                if (ModelState.IsValid)
+                {
+                    PostComment postComment = new PostComment
+                    {
+                        PostId = postCommentsVM.PostID,
+                        UserId = session_user,
+                        CommentText = postCommentsVM.CommentText,
+                        Status = Status.Active,
+                        StatusChangeDate = DateTime.Now
+                    };
+
+                    _context.Add(postComment);
+                    _context.SaveChanges();
+
+                    returnValue = Redirect("/");
+                }
+            }
+            catch (Exception e)
+            {
+                string actionName = this.ControllerContext.RouteData.Values["action"].ToString();
+                string controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+                _logger.LogError(e, $"Path: {controllerName + "/" + actionName}\n" + e.Message);
+
+                returnValue = StatusCode(500, e);
             }
             return returnValue;
         }

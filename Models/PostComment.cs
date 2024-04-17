@@ -11,7 +11,7 @@ public partial class PostComment
 
     public long UserId { get; set; }
 
-    public string PostComment1 { get; set; } = null!;
+    public string CommentText { get; set; } = null!;
 
     public string Status { get; set; } = null!;
 
