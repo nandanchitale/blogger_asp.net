@@ -17,12 +17,14 @@ Error Handling: The platform includes robust error handling to ensure smooth use
 
 Technologies Used:
 
-ASP.NET Core MVC
-Entity Framework Core
-Razor Pages
-ASP.NET Core Identity
-HTML/CSS/JavaScript
-Bootstrap
+ASP.NET Core MVC,
+Entity Framework Core,
+Razor Pages,
+ASP.NET Core Identity,
+HTML/CSS/JavaScript,
+Bootstrap,
+Postgresql
+
 Getting Started:
 
 Clone the repository to your local machine.
@@ -37,19 +39,9 @@ Contributions are welcome! If you have any suggestions, bug fixes, or new featur
 
 License:
 
-This project is licensed under the MIT License. Feel free to use and modify it for your own purposes. See the LICENSE file for more details.
-
-## Badges
-
-Add badges from somewhere like: [shields.io](https://shields.io/)
+This project is licensed under the MIT License. Feel free to use and modify it for your own purposes.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-
-
-## Demo
-
-Insert gif or link to demo
-
 
 ## Deployment
 
