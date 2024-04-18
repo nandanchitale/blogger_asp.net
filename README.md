@@ -66,12 +66,6 @@ docker compose up --build -d
 dotnet run --project .\Blogger\Blogger.csproj
 ```
 
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
-
-
 ## Tech Stack
 
 **Client:** Razor Pages, Bootstraps 5
