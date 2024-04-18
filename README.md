@@ -19,7 +19,6 @@ Technologies Used:
 
 ASP.NET Core MVC,
 Entity Framework Core,
-Razor Pages,
 ASP.NET Core Identity,
 HTML/CSS/JavaScript,
 Bootstrap,
@@ -68,7 +67,7 @@ dotnet run --project .\Blogger\Blogger.csproj
 
 ## Tech Stack
 
-**Client:** Razor Pages, Bootstraps 5
+**Client:** Bootstraps 5, Javascript, QuillJS
 
 **Server:** Asp.Net core 8 MVC, Postgresql
 
